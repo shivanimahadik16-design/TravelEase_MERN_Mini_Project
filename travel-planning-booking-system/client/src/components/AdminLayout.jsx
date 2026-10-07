@@ -19,6 +19,7 @@ export default function AdminLayout({ user, setUser }) {
     if (path.includes("/activities")) return "Activities & Tours Management";
     if (path.includes("/bookings")) return "Central Bookings Dispatch";
     if (path.includes("/users")) return "User & Access Directory";
+    if (path.includes("/security")) return "Account Security";
     return "Executive Command & Analytics";
   };
 
@@ -81,6 +82,11 @@ export default function AdminLayout({ user, setUser }) {
           <NavLink to="/admin/users" className={({ isActive }) => `admin-nav-item ${isActive ? "active" : ""}`}>
             <Icon name="users" size={18} />
             <span>Users Directory</span>
+          </NavLink>
+
+          <NavLink to="/admin/security" className={({ isActive }) => `admin-nav-item ${isActive ? "active" : ""}`}>
+            <Icon name="shield" size={18} />
+            <span>Change Password</span>
           </NavLink>
         </nav>
 

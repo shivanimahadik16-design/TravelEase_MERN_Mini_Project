@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Routes, Route, Navigate, Outlet } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Routes, Route, Navigate, Outlet, useNavigate } from "react-router-dom";
 
 // Layout components
 import UserNavbar from "./components/UserNavbar";
@@ -24,6 +24,7 @@ import AdminHotels from "./pages/admin/AdminHotels";
 import AdminActivities from "./pages/admin/AdminActivities";
 import AdminBookings from "./pages/admin/AdminBookings";
 import AdminUsers from "./pages/admin/AdminUsers";
+import ChangePasswordPage from "./pages/user/ChangePasswordPage";
 
 // User Layout wrapper
 function UserLayoutWrapper({ user, setUser }) {
@@ -44,10 +45,23 @@ function ProtectedUser({ user, children }) {
   return children;
 }
 
+function ClearUnauthorizedSession({ setUser }) {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    navigate("/login", { replace: true });
+  }, [navigate, setUser]);
+
+  return null;
+}
+
 // Admin Protected Route
 function ProtectedAdmin({ user, setUser }) {
   if (!user) return <Navigate to="/login" replace />;
-  if (user.role !== "admin") return <Navigate to="/" replace />;
+  if (user.role !== "admin") return <ClearUnauthorizedSession setUser={setUser} />;
   return <AdminLayout user={user} setUser={setUser} />;
 }
 
@@ -72,6 +86,14 @@ export default function App() {
         <Route path="/activities" element={<ActivitiesPage />} />
         <Route path="/login" element={<AuthPage mode="login" setUser={setUser} />} />
         <Route path="/register" element={<AuthPage mode="register" setUser={setUser} />} />
+        <Route
+          path="/account/password"
+          element={
+            <ProtectedUser user={user}>
+              <ChangePasswordPage />
+            </ProtectedUser>
+          }
+        />
 
         {/* User Protected Routes */}
         <Route
@@ -108,6 +130,7 @@ export default function App() {
         <Route path="activities" element={<AdminActivities />} />
         <Route path="bookings" element={<AdminBookings />} />
         <Route path="users" element={<AdminUsers />} />
+        <Route path="security" element={<ChangePasswordPage admin />} />
       </Route>
 
       {/* Fallback */}

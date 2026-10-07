@@ -2,26 +2,36 @@ import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 
 export async function protect(req, res, next) {
-  try {
-    const header = req.headers.authorization;
-    if (!header?.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Authentication required" });
-    }
-
-    const token = header.split(" ")[1];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = await User.findById(decoded.id).select("-password");
-
-    if (!req.user) return res.status(401).json({ message: "User not found" });
-    next();
-  } catch {
-    res.status(401).json({ message: "Invalid or expired token" });
+  const header = req.headers.authorization;
+  if (!header?.startsWith("Bearer ")) {
+    const error = new Error("Authentication required");
+    error.statusCode = 401;
+    throw error;
   }
+
+  let decoded;
+  try {
+    decoded = jwt.verify(header.slice(7), process.env.JWT_SECRET);
+  } catch {
+    const error = new Error("Invalid or expired token");
+    error.statusCode = 401;
+    throw error;
+  }
+
+  req.user = await User.findById(decoded.id).select("-password");
+  if (!req.user) {
+    const error = new Error("User not found");
+    error.statusCode = 401;
+    throw error;
+  }
+  next();
 }
 
 export function adminOnly(req, res, next) {
   if (req.user?.role !== "admin") {
-    return res.status(403).json({ message: "Admin access required" });
+    const error = new Error("Admin access required");
+    error.statusCode = 403;
+    return next(error);
   }
   next();
 }

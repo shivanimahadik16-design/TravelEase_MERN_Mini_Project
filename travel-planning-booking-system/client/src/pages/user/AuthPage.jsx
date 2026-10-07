@@ -10,14 +10,6 @@ export default function AuthPage({ mode, setUser }) {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  const fillAdmin = () => {
-    setForm({ name: "", email: "admin@travelease.com", password: "Admin@123" });
-  };
-
-  const fillUser = () => {
-    setForm({ name: "", email: "user@travelease.com", password: "User@123" });
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -93,7 +85,7 @@ export default function AuthPage({ mode, setUser }) {
             <input
               type="password"
               required
-              minLength={6}
+              minLength={register ? 8 : undefined}
               className="u-input"
               placeholder="••••••••"
               value={form.password}
@@ -110,21 +102,6 @@ export default function AuthPage({ mode, setUser }) {
             {submitting ? "Processing..." : register ? "Register Account" : "Sign In"}
           </button>
         </form>
-
-        {/* 1-Click Demo Accounts Selector */}
-        {!register && (
-          <div className="demo-accounts-box">
-            <h4>⚡ Quick Test Credentials:</h4>
-            <div className="demo-btns">
-              <button type="button" onClick={fillAdmin} className="demo-chip">
-                🛡️ Fill Admin (admin@travelease.com)
-              </button>
-              <button type="button" onClick={fillUser} className="demo-chip">
-                👤 Fill Demo User (user@travelease.com)
-              </button>
-            </div>
-          </div>
-        )}
 
         <div style={{ textAlign: "center", marginTop: 22, fontSize: "0.9rem", color: "#64748b" }}>
           {register ? (

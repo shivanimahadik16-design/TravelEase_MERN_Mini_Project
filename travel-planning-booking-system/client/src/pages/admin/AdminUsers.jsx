@@ -7,13 +7,17 @@ export default function AdminUsers() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const loadUsers = async () => {
+    setLoading(true);
+    setError("");
     try {
       const { data } = await api.get("/admin/users");
       setUsers(data);
     } catch (err) {
       console.error(err);
+      setError(err.response?.data?.message || "Could not load registered accounts. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -69,6 +73,9 @@ export default function AdminUsers() {
           <div style={{ fontSize: "0.85rem", color: "#94a3b8" }}>
             Showing <strong>{filtered.length}</strong> of {users.length} registered accounts
           </div>
+          <button className="adm-btn adm-btn-secondary" onClick={loadUsers} disabled={loading}>
+            {loading ? "Loading..." : "Refresh"}
+          </button>
         </div>
 
         <div style={{ overflowX: "auto" }}>
@@ -87,6 +94,12 @@ export default function AdminUsers() {
                 <tr>
                   <td colSpan={5} style={{ textAlign: "center", padding: 30, color: "#64748b" }}>
                     Loading user directory...
+                  </td>
+                </tr>
+              ) : error ? (
+                <tr>
+                  <td colSpan={5} style={{ textAlign: "center", padding: 30, color: "#f87171" }}>
+                    {error}
                   </td>
                 </tr>
               ) : filtered.length === 0 ? (

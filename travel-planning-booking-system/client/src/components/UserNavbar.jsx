@@ -26,15 +26,16 @@ export default function UserNavbar({ user, setUser }) {
         <NavLink to="/activities">Activities</NavLink>
         {user && <NavLink to="/trips">Itinerary Planner</NavLink>}
         {user && <NavLink to="/bookings">My Bookings</NavLink>}
+        {user && <NavLink to="/account/password">Change Password</NavLink>}
       </nav>
 
       <div className="user-nav-actions">
         {user ? (
           <>
             {user.role === "admin" && (
-              <Link to="/admin" className="admin-mode-pill" title="Open Administrator Control Hub">
-                <Icon name="shield" size={15} />
-                <span>Admin Console →</span>
+              <Link to="/admin" className="u-btn u-btn-secondary" title="Open the administrator dashboard">
+                <Icon name="shield" size={16} />
+                Admin Dashboard
               </Link>
             )}
 
